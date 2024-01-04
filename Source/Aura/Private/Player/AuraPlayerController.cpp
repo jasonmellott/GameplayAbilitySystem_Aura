@@ -4,10 +4,74 @@
 #include "Player/AuraPlayerController.h"
 #include "EnhancedInputSubsystems.h"
 #include <EnhancedInputComponent.h>
+#include "Interaction/EnemyInterface.h"
 
 AAuraPlayerController::AAuraPlayerController()
 {
 	bReplicates = true;
+}
+
+void AAuraPlayerController::PlayerTick(float DeltaTime)
+{
+	Super::PlayerTick(DeltaTime);
+	CursorTrace();
+}
+
+void AAuraPlayerController::CursorTrace()
+{
+	FHitResult CursorHit;
+	GetHitResultUnderCursor(ECC_Visibility, false, CursorHit);
+	if (!CursorHit.bBlockingHit) return;
+
+	LastActor = ThisActor;
+	ThisActor = Cast<IEnemyInterface>(CursorHit.GetActor());
+
+	/* Line trace from cursor.There are several scenarios :
+	*  A. Last actor is null and ThisActor is null
+	*	- do nothing
+	*  B. LastActor is null && ThisActor is valid
+	*  - highlight thisActor
+	*  C. LastActor is valid && ThisActor is null
+	*  - unhighlight lastactor
+	*  D. Both actors are valid, but lastactor not ThisActor
+	*  - highlight this actor. unhighlight last actor
+	*  E. both actors are valid, and are the same actor
+	*  - do nothing
+	*/
+
+	if (LastActor == nullptr)
+	{
+		if (ThisActor != nullptr)
+		{
+			// Case B - Highlight ThisActor
+			ThisActor->HighlightActor();
+		}
+		else
+		{
+			// Case A - Do nothing
+		}
+	}
+	else // LastActor is valid
+	{
+		if (ThisActor == nullptr)
+		{
+			// Case C - UnHighlight LastActor
+			LastActor->UnHighlightActor();
+		}
+		else // both actors are valid
+		{
+			if (LastActor != ThisActor)
+			{
+				// Case D - UnHighlight LastActor and Highlight ThisActor
+				LastActor->UnHighlightActor();
+				ThisActor->HighlightActor();
+			}
+			else
+			{
+				// Case E - Do nothing
+			}
+		}
+	}
 }
 
 void AAuraPlayerController::BeginPlay()
