@@ -9,7 +9,7 @@
 
 UAuraAttributeSet::UAuraAttributeSet()
 {
-	InitHealth(50.f);
+	InitHealth(10.f);
 	InitHealthMax(100.f);
 	InitMana(50.f);
 	InitManaMax(200.f);
@@ -36,11 +36,11 @@ void UAuraAttributeSet::PreAttributeChange(const FGameplayAttribute& Attribute, 
 
 	if (Attribute == GetHealthAttribute())
 	{
-		NewValue = FMath::Clamp(NewValue, 0.f, GetHealthMax());
+		//NewValue = FMath::Clamp(NewValue, 0.f, GetHealthMax());
 	}
 	if (Attribute == GetManaAttribute())
 	{
-		NewValue = FMath::Clamp(NewValue, 0.f, GetManaMax());
+		//NewValue = FMath::Clamp(NewValue, 0.f, GetManaMax());
 	}
 }
 
@@ -84,11 +84,11 @@ void UAuraAttributeSet::PostGameplayEffectExecute(const FGameplayEffectModCallba
 
 	if (Data.EvaluatedData.Attribute == GetHealthAttribute())
 	{
-		SetHealth(FMath::ClampAngle(GetHealth(), 0.f, GetHealthMax()));
+		//SetHealth(FMath::ClampAngle(GetHealth(), 0.f, GetHealthMax()));
 	}
 	if (Data.EvaluatedData.Attribute == GetManaAttribute())
 	{
-		SetHealth(FMath::ClampAngle(GetMana(), 0.f, GetManaMax()));
+		//SetHealth(FMath::ClampAngle(GetMana(), 0.f, GetManaMax()));
 	}
 }
 
