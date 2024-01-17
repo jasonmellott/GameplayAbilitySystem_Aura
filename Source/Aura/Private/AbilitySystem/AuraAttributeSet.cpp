@@ -6,6 +6,7 @@
 #include <Net/UnrealNetwork.h>
 #include "AbilitySystemBlueprintLibrary.h"
 #include "GameFramework/Character.h"
+#include "AuraGameplayTags.h"
 
 void UAuraAttributeSet::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
 {
