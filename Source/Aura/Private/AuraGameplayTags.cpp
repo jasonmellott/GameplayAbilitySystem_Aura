@@ -26,4 +26,11 @@ void FAuraGameplayTags::InitializeNativeGameplayTags()
 
 	GameplayTags.Attributes_Vital_Health = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("Attributes.Vital.Health"), FString("The amount of damage that can be sustained before falling."));
 	GameplayTags.Attributes_Vital_Mana = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("Attributes.Vital.Mana"), FString("Resource consumed by casting spells."));
+
+	GameplayTags.InputTag_Ability_Primary = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("InputTag.Ability.Primary"), FString("Input Tag for Primary ability."));
+	GameplayTags.InputTag_Ability_Secondary = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("InputTag.Ability.Secondary"), FString("Input Tag for Secondary ability."));
+	GameplayTags.InputTag_Ability_Tertiary_1 = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("InputTag.Ability.Tertiary.1"), FString("Input Tag for Tertiary ability 1."));
+	GameplayTags.InputTag_Ability_Tertiary_2 = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("InputTag.Ability.Tertiary.2"), FString("Input Tag for Tertiary ability 2."));
+	GameplayTags.InputTag_Ability_Tertiary_3 = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("InputTag.Ability.Tertiary.3"), FString("Input Tag for Tertiary ability 3."));
+	GameplayTags.InputTag_Ability_Tertiary_4 = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("InputTag.Ability.Tertiary.4"), FString("Input Tag for Tertiary ability 4."));
 }

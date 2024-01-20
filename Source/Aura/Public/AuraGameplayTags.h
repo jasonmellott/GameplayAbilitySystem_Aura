@@ -36,7 +36,12 @@ public:
 	FGameplayTag Attributes_Vital_Health;
 	FGameplayTag Attributes_Vital_Mana;
 
-protected:
+	FGameplayTag InputTag_Ability_Primary;
+	FGameplayTag InputTag_Ability_Secondary;
+	FGameplayTag InputTag_Ability_Tertiary_1;
+	FGameplayTag InputTag_Ability_Tertiary_2;
+	FGameplayTag InputTag_Ability_Tertiary_3;
+	FGameplayTag InputTag_Ability_Tertiary_4;
 
 private:
 	static FAuraGameplayTags GameplayTags;
