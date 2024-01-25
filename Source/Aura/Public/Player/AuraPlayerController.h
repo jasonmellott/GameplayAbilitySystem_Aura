@@ -37,7 +37,14 @@ private:
 	UPROPERTY(EditAnywhere, Category = "Input")
 	TObjectPtr<UInputAction> MoveAction;
 
+	UPROPERTY(EditAnywhere, Category = "Input")
+	TObjectPtr<UInputAction> PreventMoveAction;
+
 	void Move(const struct FInputActionValue& InputActionValue);
+	
+	void PreventMoveActionStarted() { bPreventMove = true; };
+	void PreventMoveActionCompleted() { bPreventMove = false; };
+	bool bPreventMove = false;
 
 	void CursorTrace();
 	IEnemyInterface* LastActor;
