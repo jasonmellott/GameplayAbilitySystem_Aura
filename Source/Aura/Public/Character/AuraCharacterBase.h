@@ -29,6 +29,7 @@ protected:
 	FName ProjectileOriginSocketName;
 
 	virtual FVector GetCombatSocketLocation();
+	virtual void SetFacingTarget(FVector Target);
 
 	UPROPERTY()
 	TObjectPtr<UAbilitySystemComponent> AbilitySystemComponent;

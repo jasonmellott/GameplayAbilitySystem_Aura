@@ -34,6 +34,10 @@ FVector AAuraCharacterBase::GetCombatSocketLocation()
 	return Weapon->GetSocketLocation(ProjectileOriginSocketName);
 }
 
+void AAuraCharacterBase::SetFacingTarget(FVector Target)
+{
+}
+
 void AAuraCharacterBase::InitAbilityActorInfo()
 {
 }
