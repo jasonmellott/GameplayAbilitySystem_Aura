@@ -4,6 +4,8 @@
 #include "AbilitySystem/Abilities/AuraProjectileAbility.h"
 #include "Actor/AuraProjectile.h"
 #include <Interaction/CombatInterface.h>
+#include <AbilitySystemBlueprintLibrary.h>
+#include <AbilitySystemComponent.h>
 
 void UAuraProjectileAbility::ActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, const FGameplayEventData* TriggerEventData)
 {
@@ -28,7 +30,9 @@ void UAuraProjectileAbility::SpawnProjectile(const FVector& ProjectileTargetLoca
 
 		AAuraProjectile* Projectile = GetWorld()->SpawnActorDeferred<AAuraProjectile>(ProjectileClass, SpawnTransform, GetOwningActorFromActorInfo(), Cast<APawn>(GetOwningActorFromActorInfo()), ESpawnActorCollisionHandlingMethod::AlwaysSpawn);
 
-		//TODO: Give the projectile a gameplay effect spec for causing damage
+		UAbilitySystemComponent* SourceASC = UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(GetAvatarActorFromActorInfo());
+		FGameplayEffectSpecHandle SpecHandle = SourceASC->MakeOutgoingSpec(DamageEffectClass, GetAbilityLevel(), SourceASC->MakeEffectContext());
+		Projectile->DamageEffectSpecHandle = SpecHandle;
 
 		Projectile->FinishSpawning(SpawnTransform);
 	}
