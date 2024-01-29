@@ -34,5 +34,7 @@ void FAuraGameplayTags::InitializeNativeGameplayTags()
 	GameplayTags.InputTag_Ability_Tertiary_3 = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("InputTag.Ability.Tertiary.3"), FString("Input Tag for Tertiary ability 3."));
 	GameplayTags.InputTag_Ability_Tertiary_4 = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("InputTag.Ability.Tertiary.4"), FString("Input Tag for Tertiary ability 4."));
 
+	GameplayTags.Effects_HitReact = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("Effects.HitReact"), FString("Flag used to trigger hit reactions."));
+
 	GameplayTags.Damage = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("Damage"), FString("Damage"));
 }

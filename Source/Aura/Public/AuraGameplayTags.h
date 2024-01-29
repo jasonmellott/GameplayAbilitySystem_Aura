@@ -43,6 +43,8 @@ public:
 	FGameplayTag InputTag_Ability_Tertiary_3;
 	FGameplayTag InputTag_Ability_Tertiary_4;
 
+	FGameplayTag Effects_HitReact;
+
 	FGameplayTag Damage;
 
 private:
