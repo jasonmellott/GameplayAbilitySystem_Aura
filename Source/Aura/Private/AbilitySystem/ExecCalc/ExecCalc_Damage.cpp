@@ -5,6 +5,9 @@
 #include "AbilitySystem/AuraAbilitySystemComponent.h"
 #include "AbilitySystem/AuraAttributeSet.h"
 #include "AuraGameplayTags.h"
+#include <AbilitySystem/Data/CharacterClassInfo.h>
+#include <AbilitySystem/AuraAbilitySystemLibrary.h>
+#include <Interaction/CombatInterface.h>
 
 struct AuraDamageStatics
 {
@@ -41,9 +44,12 @@ void UExecCalc_Damage::Execute_Implementation(const FGameplayEffectCustomExecuti
 	const UAbilitySystemComponent* SourceASC = ExecutionParams.GetSourceAbilitySystemComponent();
 	const UAbilitySystemComponent* TargetASC = ExecutionParams.GetTargetAbilitySystemComponent();
 
-	const AActor* SourceAvatar = SourceASC ? SourceASC->GetAvatarActor() : nullptr;
-	const AActor* TargetAvatar = TargetASC ? TargetASC->GetAvatarActor() : nullptr;
+	AActor* SourceAvatar = SourceASC ? SourceASC->GetAvatarActor() : nullptr;
+	AActor* TargetAvatar = TargetASC ? TargetASC->GetAvatarActor() : nullptr;
+	ICombatInterface* SourceCombatInterface = Cast<ICombatInterface>(SourceAvatar);
+	ICombatInterface* TargetCombatInterface = Cast<ICombatInterface>(TargetAvatar);
 
+	const UCharacterClassInfo* CharacterClassInfo = UAuraAbilitySystemLibrary::GetCharacterClassInfo(SourceAvatar);
 	const FGameplayEffectSpec& Spec = ExecutionParams.GetOwningSpec();
 
 	FAggregatorEvaluateParameters EvaluationParameters;
@@ -60,8 +66,9 @@ void UExecCalc_Damage::Execute_Implementation(const FGameplayEffectCustomExecuti
 	bool bBlocked = FMath::RandRange(UE_SMALL_NUMBER, 100.f) <= TargetBlockChance;
 	if (bBlocked)
 	{
-		// If blocked, half the damage
-		Damage = Damage * 0.5f;
+		const FRealCurve* BlockDamageReductionCurve = CharacterClassInfo->DamageCalculationCoefficients->FindCurve(FName("BlockDamageReduction"), FString());
+		const float BlockDamageReduction = BlockDamageReductionCurve->Eval(TargetCombatInterface->GetCharacterLevel());
+		Damage = Damage * (1.f - BlockDamageReduction);
 	}
 
 	float TargetArmor = 0.f;
@@ -72,8 +79,13 @@ void UExecCalc_Damage::Execute_Implementation(const FGameplayEffectCustomExecuti
 	ExecutionParams.AttemptCalculateCapturedAttributeMagnitude(DamageStatics().ArmorPenetrationDef, EvaluationParameters, SourceArmorPenetration);
 	SourceArmorPenetration = FMath::Max(SourceArmorPenetration, 0);
 
-	const float EffectiveArmor = TargetArmor * (100 - SourceArmorPenetration) / 100.f;
-	Damage *= (100.f - EffectiveArmor * 0.333f) / 100.f;
+	const FRealCurve* ArmorPenetrationCurve = CharacterClassInfo->DamageCalculationCoefficients->FindCurve(FName("ArmorPenetration"), FString());
+	const float ArmorPenetrationCoefficient = ArmorPenetrationCurve->Eval(SourceCombatInterface->GetCharacterLevel());
+
+	const float EffectiveArmor = TargetArmor * (100 - SourceArmorPenetration * ArmorPenetrationCoefficient) / 100.f;
+	const FRealCurve* EffectiveArmorCurve = CharacterClassInfo->DamageCalculationCoefficients->FindCurve(FName("EffectiveArmor"), FString());
+	const float EffectiveArmorCoefficient = EffectiveArmorCurve->Eval(TargetCombatInterface->GetCharacterLevel());
+	Damage *= (100.f - EffectiveArmor * EffectiveArmorCoefficient) / 100.f;
 
 	const FGameplayModifierEvaluatedData EvaluatedData(UAuraAttributeSet::GetIncomingDamageAttribute(), EGameplayModOp::Additive, Damage);
 	OutExecutionOutput.AddOutputModifier(EvaluatedData);
