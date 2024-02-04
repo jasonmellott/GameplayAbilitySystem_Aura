@@ -4,14 +4,15 @@
 #include "AbilitySystem/ExecCalc/ExecCalc_Damage.h"
 #include "AbilitySystem/AuraAbilitySystemComponent.h"
 #include "AbilitySystem/AuraAttributeSet.h"
+#include "AuraGameplayTags.h"
 
 struct AuraDamageStatics
 {
-	DECLARE_ATTRIBUTE_CAPTUREDEF(Armor);
+	DECLARE_ATTRIBUTE_CAPTUREDEF(BlockChance);
 
 	AuraDamageStatics()
 	{
-		DEFINE_ATTRIBUTE_CAPTUREDEF(UAuraAttributeSet, Armor, Target, false);
+		DEFINE_ATTRIBUTE_CAPTUREDEF(UAuraAttributeSet, BlockChance, Target, false);
 	}
 };
 
@@ -23,7 +24,7 @@ static const AuraDamageStatics DamageStatics()
 
 UExecCalc_Damage::UExecCalc_Damage()
 {
-	RelevantAttributesToCapture.Add(DamageStatics().ArmorDef);
+	RelevantAttributesToCapture.Add(DamageStatics().BlockChanceDef);
 }
 
 void UExecCalc_Damage::Execute_Implementation(const FGameplayEffectCustomExecutionParameters& ExecutionParams, FGameplayEffectCustomExecutionOutput& OutExecutionOutput) const
@@ -40,11 +41,20 @@ void UExecCalc_Damage::Execute_Implementation(const FGameplayEffectCustomExecuti
 	EvaluationParameters.SourceTags = Spec.CapturedSourceTags.GetAggregatedTags();
 	EvaluationParameters.TargetTags = Spec.CapturedTargetTags.GetAggregatedTags();
 
-	float Armor = 0.f;
-	ExecutionParams.AttemptCalculateCapturedAttributeMagnitude(DamageStatics().ArmorDef, EvaluationParameters, Armor);
-	Armor = FMath::Max<float>(0.f, Armor);
-	++Armor;
+	// Get Damage set by Caller magnitude
+	float Damage = Spec.GetSetByCallerMagnitude(FAuraGameplayTags::Get().Damage);
 
-	const FGameplayModifierEvaluatedData EvaluatedData(DamageStatics().ArmorProperty, EGameplayModOp::Additive, Armor);
+	// Capture BlockChance on Target, and determine if there was a successful Block
+	// If Block, half the damage
+	float TargetBlockChance = 0.f;
+	ExecutionParams.AttemptCalculateCapturedAttributeMagnitude(DamageStatics().BlockChanceDef, EvaluationParameters, TargetBlockChance);
+
+	bool bBlocked = FMath::RandRange(UE_SMALL_NUMBER, 100.f) <= TargetBlockChance;
+	if (bBlocked)
+	{
+		Damage = Damage * 0.5f;
+	}
+
+	const FGameplayModifierEvaluatedData EvaluatedData(UAuraAttributeSet::GetIncomingDamageAttribute(), EGameplayModOp::Additive, Damage);
 	OutExecutionOutput.AddOutputModifier(EvaluatedData);
 }
