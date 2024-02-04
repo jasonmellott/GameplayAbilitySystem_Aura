@@ -94,7 +94,7 @@ void UAuraAttributeSet::PostGameplayEffectExecute(const FGameplayEffectModCallba
 	}
 	if (Data.EvaluatedData.Attribute == GetManaAttribute())
 	{
-		SetHealth(FMath::ClampAngle(GetMana(), 0.f, GetManaMax()));
+		SetMana(FMath::ClampAngle(GetMana(), 0.f, GetManaMax()));
 	}
 
 	if (Data.EvaluatedData.Attribute == GetIncomingDamageAttribute())
