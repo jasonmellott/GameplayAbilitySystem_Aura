@@ -8,6 +8,7 @@
 #include <AbilitySystem/Data/CharacterClassInfo.h>
 #include <AbilitySystem/AuraAbilitySystemLibrary.h>
 #include <Interaction/CombatInterface.h>
+#include <AuraAbilityTypes.h>
 
 struct AuraDamageStatics
 {
@@ -76,6 +77,9 @@ void UExecCalc_Damage::Execute_Implementation(const FGameplayEffectCustomExecuti
 	ExecutionParams.AttemptCalculateCapturedAttributeMagnitude(DamageStatics().CriticalHitResistanceDef, EvaluationParameters, TargetCriticalHitResistance);
 
 	bool bCriticalHit = FMath::RandRange(UE_SMALL_NUMBER, 100.f) <= SourceCriticalHitChance - TargetCriticalHitResistance;
+	FGameplayEffectContextHandle EffectContextHandle = Spec.GetContext();
+	UAuraAbilitySystemLibrary::SetIsCriticalHit(EffectContextHandle, bCriticalHit);
+
 	if (bCriticalHit)
 	{
 		float SourceCriticalHitDamage = 0.f;
@@ -89,6 +93,8 @@ void UExecCalc_Damage::Execute_Implementation(const FGameplayEffectCustomExecuti
 	ExecutionParams.AttemptCalculateCapturedAttributeMagnitude(DamageStatics().BlockChanceDef, EvaluationParameters, TargetBlockChance);
 
 	bool bBlocked = FMath::RandRange(UE_SMALL_NUMBER, 100.f) <= TargetBlockChance;
+	UAuraAbilitySystemLibrary::SetIsBlockedHit(EffectContextHandle, bBlocked);
+
 	if (bBlocked)
 	{
 		const FRealCurve* BlockDamageReductionCurve = CharacterClassInfo->DamageCalculationCoefficients->FindCurve(FName("BlockDamageReduction"), FString());
