@@ -1,12 +1,12 @@
 // Copyright 2024 WAM Productions
 
 
-#include "AI/MyBTService_FindNearestPlayer.h"
+#include "AI/BTService_FindNearestPlayer.h"
 #include "AIController.h"
 #include "Kismet/GameplayStatics.h"
 #include <BehaviorTree/BTFunctionLibrary.h>
 
-void UMyBTService_FindNearestPlayer::TickNode(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory, float DeltaSeconds)
+void UBTService_FindNearestPlayer::TickNode(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory, float DeltaSeconds)
 {
 	Super::TickNode(OwnerComp, NodeMemory, DeltaSeconds);
 
